@@ -14,7 +14,7 @@ Arduino pin A5 -> NXT cable pin 5
 I got my cables from MindSensors:
 http://www.mindsensors.com/index.php?module=pagemaster&PAGE_user_op=view_page&PAGE_id=139&MMN_position=50:50
 
-More information on conneting to the NXT can be found here:
+More information on connecting to the NXT can be found here:
 http://www.philohome.com/nxt.htm
 
 The Rx is controlled/powered in much the same way as the DIYDrone Spektrum adapter.

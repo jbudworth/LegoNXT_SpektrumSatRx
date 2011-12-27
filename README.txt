@@ -1,7 +1,7 @@
 Code for the Arduino Pro Mini 5V 16MHz to allow the connection of a Spektrum 
 Satellite Receiver to a Lego NXT Mindstorms.
 
-This allows the Spektrum Rx to mimic the HiTecnic IRReceiver and using the same 
+This allows the Spektrum Rx to mimic the HiTechnic IRReceiver and using the same 
 NXT-G software module the HiTechnic brick uses the data can be accessed the 
 same way.
 http://www.hitechnic.com/cgi-bin/commerce.cgi?preadd=action&key=NIR1032

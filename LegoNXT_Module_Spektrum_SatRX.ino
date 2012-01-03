@@ -34,26 +34,21 @@ byte sendbuffer[] = {
 int PWM_MODE[] = {
   0, 16, 30, 44, 58, 72, 86, 100, -128};
 
-int Bind_pin = 2;
-int Rx_PowerPin = 0;
+int Bind_pin = 3;
+int Rx_PowerPin = 1;
+int Binding_LED = 13;
+unsigned long time;
 
 SatelliteReceiver Rx;
 
 void setup() {
   pinMode(Rx_PowerPin, OUTPUT);
+  pinMode(Binding_LED, OUTPUT);
   pinMode(Bind_pin, INPUT);
   digitalWrite(Bind_pin, HIGH);
   if ( digitalRead(Bind_pin) == LOW){
     SpektrumBind(); // Place Sat into bind mode to interface with the Spektrum sat
   }
-
-  /*
-  UCSR0B &= ~(1 << TXCIE0); // disable Tx interrupt
-   UCSR0B &= ~(1 << TXEN0); // disable USART1 Tx
-   PORTD &= ~(1 << PORTD1); // disable pull-up
-   DDRD |= (1 << DDD1); // Tx as output
-   PORTD |= (1 << PORTD1); // Set HIGH to enable adapter regulator
-   */
 
   digitalWrite(Rx_PowerPin, HIGH);
   Serial.begin(115200); // Receive data from Rx
@@ -167,20 +162,11 @@ void requestEvent(){
 //---------------------------------Spektrum Bind Routine-------------------------------//
 void SpektrumBind(void)
 {
-  unsigned long time;
   unsigned char connected = 0;
-
-  /*
-  UCSR0B &= ~(1 << TXCIE0); // disable Tx interrupt
-   UCSR0B &= ~(1 << TXEN0); // disable USART1 Tx
-   PORTD &= ~(1 << PORTD1); // disable pull-up
-   DDRD |= (1 << DDD1); // Tx as output
-   PORTD |= (1 << PORTD1); // Set HIGH to enable adapter regulator
-   */
-
 
   // Connect the power for the Rx to pin this is brought
   // high and turns on a transistor.
+  delay(5);		//Delay added to work with Orange receivers
   digitalWrite(Rx_PowerPin, HIGH);
 
   UCSR0B &= ~(1 << RXCIE0); // disable Rx interrupt
@@ -193,11 +179,12 @@ void SpektrumBind(void)
     if(PIND & (1 << PORTD0))
     {
       connected = 1;
+      digitalWrite(Binding_LED, HIGH);
       break;
     }
   }
 
-  if(connected)
+  if(connected == 1)
   {
 
     DDRD |= (1 << DDD0); // Rx as output
@@ -213,26 +200,22 @@ void SpektrumBind(void)
     // 7 low pulses: no result
     // 8 low pulses: DSMX 11ms
 
-    PORTD &= ~(1 << PORTD0);    
-    delayMicroseconds(116);  // 1 LOW
-    PORTD |= (1 << PORTD0);     
-    delayMicroseconds(116);
-    PORTD &= ~(1 << PORTD0);    
-    delayMicroseconds(116);  // 2 LOW
-    PORTD |= (1 << PORTD0);     
-    delayMicroseconds(116);
-    //PORTD &= ~(1 << PORTD0);    delayMicroseconds(116);  // 3 LOW
-    //PORTD |= (1 << PORTD0);     delayMicroseconds(116);
-    //PORTD &= ~(1 << PORTD0);    delayMicroseconds(116);  // 4 LOW
-    //PORTD |= (1 << PORTD0);     delayMicroseconds(116);
-    //PORTD &= ~(1 << PORTD0);    delayMicroseconds(116);  // 5 LOW
-    //PORTD |= (1 << PORTD0);     delayMicroseconds(116);
-    //PORTD &= ~(1 << PORTD0);    delayMicroseconds(116);  // 6 LOW
-    //PORTD |= (1 << PORTD0);     delayMicroseconds(116);
-    //    PORTD &= ~(1 << PORTD0); delayMicroseconds(116);   // 7 LOW
-    //    PORTD |= (1 << PORTD0); delayMicroseconds(116);    
-    //    PORTD &= ~(1 << PORTD0); delayMicroseconds(116);   // 8 LOW
-    //    PORTD |= (1 << PORTD0); delayMicroseconds(116);   
+    PORTD &= ~(1 << PORTD0);        delayMicroseconds(116);  // 1 LOW
+    PORTD |= (1 << PORTD0);         delayMicroseconds(116);
+    PORTD &= ~(1 << PORTD0);        delayMicroseconds(116);  // 2 LOW
+    PORTD |= (1 << PORTD0);         delayMicroseconds(116);
+    //PORTD &= ~(1 << PORTD0);      delayMicroseconds(116);  // 3 LOW
+    //PORTD |= (1 << PORTD0);       delayMicroseconds(116);
+    //PORTD &= ~(1 << PORTD0);      delayMicroseconds(116);  // 4 LOW
+    //PORTD |= (1 << PORTD0);       delayMicroseconds(116);
+    //PORTD &= ~(1 << PORTD0);      delayMicroseconds(116);  // 5 LOW
+    //PORTD |= (1 << PORTD0);       delayMicroseconds(116);
+    //PORTD &= ~(1 << PORTD0);      delayMicroseconds(116);  // 6 LOW
+    //PORTD |= (1 << PORTD0);       delayMicroseconds(116);
+    //PORTD &= ~(1 << PORTD0);      delayMicroseconds(116);   // 7 LOW
+    //PORTD |= (1 << PORTD0);       delayMicroseconds(116);    
+    //PORTD &= ~(1 << PORTD0);      delayMicroseconds(116);   // 8 LOW
+    //PORTD |= (1 << PORTD0);       delayMicroseconds(116);   
 
   }
   else {
@@ -240,5 +223,6 @@ void SpektrumBind(void)
   }
   PORTD &= ~(1 << PORTD0);
 }
+
 
 
